@@ -435,12 +435,15 @@ function ready_for_notification() {
                     if (url.parse(conf.sub[i]['nu']).hostname === 'autoset') {
                         conf.sub[i]['nu'] = 'mqtt://' + conf.cse.host + '/' + conf.ae.id;
                         noti_topic = util.format('/oneM2M/req/%s/%s/#', cseid, conf.ae.id);
+                        console.log('first noti_topic',+noti_topic);
                     }
                     else if (url.parse(conf.sub[i]['nu']).hostname === conf.cse.host) {
                         noti_topic = util.format('/oneM2M/req/%s/%s/#', cseid, conf.ae.id);
+                        console.log('first noti_topic',+noti_topic);
                     }
                     else {
                         noti_topic = util.format('%s', url.parse(conf.sub[i].nu).pathname);
+                        console.log('first noti_topic',+noti_topic);
                     }
                 }
             }
@@ -456,6 +459,7 @@ function mqtt_connect(serverip, noti_topic) {
     mqtt_client.on('connect', function () {
         mqtt_client.subscribe(noti_topic);
         console.log('[mqtt_connect] noti_topic : ' + noti_topic);
+        console.log('http_app.js ',noti_topic)
     });
 
     mqtt_client.on('message', function (topic, message) {

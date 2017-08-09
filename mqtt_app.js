@@ -29,7 +29,7 @@ else {
 var reg_resp_topic = '/oneM2M/reg_resp/'+conf.ae.id+'/'+cseid+'/#';
 var resp_topic = '/oneM2M/resp/'+conf.ae.id+'/'+cseid+'/#';
 var noti_topic = '/oneM2M/req/'+cseid+'/'+conf.ae.id+'/#';
-
+console.log('mqtt-app.js ',noti_topic);
 global.sh_adn = require('./mqtt_adn');
 var noti = require('./noti');
 var tas = require('./thyme_tas');

@@ -49,6 +49,7 @@ function http_request(path, method, ty, bodyString, callback) {
         options.ca = fs.readFileSync('ca-crt.pem');
         options.rejectUnauthorized = false;
 
+
         var http = require('https');
     }
     else {
@@ -355,4 +356,3 @@ exports.crtci = function(parent, count, content, socket, callback) {
         callback(res.headers['x-m2m-rsc'], res_body, parent, socket);
     });
 };
-

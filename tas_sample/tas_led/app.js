@@ -9,7 +9,7 @@ var util = require('util');
 var fs = require('fs');
 var xml2js = require('xml2js');
 var exec = require("child_process").exec;
-
+var gpio = require('rpi-gpio');
 var wdt = require('./wdt');
 
 var useparentport = '';
@@ -103,7 +103,8 @@ function on_receive(data) {
                             if (download_arr[j].ctname == sink_obj.ctname) {
                                 g_down_buf = JSON.stringify({id: download_arr[i].id, con: sink_obj.con});
                                 console.log(g_down_buf + ' <----');
-                                control_led(sink_obj.con);
+                                //control_led(sink_obj.con);
+                                init_light;
                                 break;
                             }
                         }
@@ -114,12 +115,47 @@ function on_receive(data) {
     }
 }
 
+var led_flag = 0;
 
-function control_led(comm_num){
-    var cmd = 'sudo ./led ' + comm_num;
-    exec(cmd, function callback(error, stdout, stderr) {
-        console.log(stdout);
-    });
+
+
+
+function init_light()
+{
+  console.log('init_light');
+
+
+  gpio.setup(12, gpio.DIR_IN);
+  gpio.on('change',function(channel, value){
+    console.log('channel ' + channel + 'value : ' + value);
+
+    if(led_flag==0)
+      led_flag++;
+      else {
+        led_flag--;
+      }
+      control_led(led_flag);
+  });
+  gpio.setup(16, gpio.DIR_IN, gpio.EDGE_BOTH);
+  gpio.setup(16, gpio.DIR_LOW);
+
+  //control_led();
+}
+
+function control_led(on_off){
+    // var cmd = 'sudo ./led ' + comm_num;
+    // exec(cmd, function callback(error, stdout, stderr) {
+    //     console.log(stdout);
+    // });
+
+    console.log('control_led'+'on_off : '+on_off);
+    if(on_off)
+      gpio.setup(12,gpio.DIR_LOW);
+      else {
+        gpio.setup(12,gpio.DIR_HIGH);
+      }
+
+
 }
 
 var Serial = null;
@@ -147,8 +183,8 @@ function tas_watchdog() {
         }
     }
     else if(tas_state == 'init_thing') {
-        control_led('0');
-        
+        //control_led('0');
+        init_light();
         tas_state = 'connect';
     }
     else if(tas_state == 'connect' || tas_state == 'reconnect') {
@@ -177,4 +213,3 @@ var g_sink_ready = [];
 var g_sink_buf_start = 0;
 var g_sink_buf_index = 0;
 var g_down_buf = '';
-

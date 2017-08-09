@@ -367,6 +367,7 @@ function mqtt_connect(serverip, noti_topic) {
     mqtt_client.on('connect', function () {
         mqtt_client.subscribe(noti_topic);
         console.log('[mqtt_connect] noti_topic : ' + noti_topic);
+        console.log('coap_app.js',noti_topic);
     });
 
     mqtt_client.on('message', function (topic, message) {

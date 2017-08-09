@@ -134,7 +134,9 @@ function ae_response_action(status, res_body, callback) {
         callback(status, aeid);
     }
 */
+
     var aeid = res_body['m2m:ae']['aei'];
+    console.log("HTTP_APP/ae_response_action aeid=", aeid);
     conf.ae.id = aeid;
     callback(status, aeid);
 }
@@ -220,6 +222,7 @@ function create_sub_all(count, callback) {
 function http_watchdog() {
     if (sh_state === 'crtae') {
         console.log('[sh_state] : ' + sh_state);
+        console.log('Http_app.js',conf.ae.parent, conf.ae.name, conf.ae.appid);
         sh_adn.crtae(conf.ae.parent, conf.ae.name, conf.ae.appid, function (status, res_body) {
             console.log(res_body);
             if (status == 5106 || status == 2001) {
@@ -235,6 +238,7 @@ function http_watchdog() {
         });
     }
     else if (sh_state === 'rtvae') {
+        console.log("HTTP_APP/http_watchdog conf.ae.id=", conf.ae.id);
         if (conf.ae.id === 'S') {
             conf.ae.id = 'S' + shortid.generate();
         }
@@ -288,6 +292,7 @@ function http_watchdog() {
                 tas.ready();
 
                 var _ae = {};
+                console.log("HTTP_APP/http_watchdog conf.ae.id=", conf.ae.id);
                 _ae.id = conf.ae.id;
                 fs.writeFileSync('aei.json', JSON.stringify(_ae, null, 4), 'utf8');
             }
@@ -348,6 +353,7 @@ function mqtt_connect(serverip, noti_topic) {
     mqtt_client.on('connect', function () {
         mqtt_client.subscribe(noti_topic);
         console.log('[mqtt_connect] noti_topic : ' + noti_topic);
+        console.log('http_app',noti_topic);
     });
 
     mqtt_client.on('message', function (topic, message) {

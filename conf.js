@@ -13,8 +13,8 @@
  */
 
 var fs = require('fs');
-var aei = JSON.parse(fs.readFileSync('aei.json')).id;
-
+//var aei = JSON.parse(fs.readFileSync('aei.json')).id;
+var aei = 'secondled';
 
 var conf = {};
 var cse = {};
@@ -26,13 +26,15 @@ var acp = {};
 conf.useprotocol = 'http'; // select one for 'http' or 'mqtt' or 'coap' or 'ws'
 
 // build cse
-cse.host        = '203.253.128.161';
+//cse.host        = '203.253.128.161';
+cse.host        = '13.124.172.12';
 cse.port        = '7579';
 cse.name        = 'Mobius';
 cse.id          = '/Mobius';
 cse.mqttport    = '1883';
 cse.wsport      = '7577';
 
+console.log("aei=", aei, "ae.id=", ae.id);
 // build ae
 if(aei != 'S') {
     ae.id = aei;
@@ -41,20 +43,39 @@ else {
     ae.id = 'S';
 }
 ae.parent       = '/' + cse.name;
-ae.name         = 'ae-edu3';
-ae.appid        = 'measure_co2';
+//ae.name         = 'ae-edu3';
+ae.name         = 'ae-secondled';
+ae.appid        = 'api-secondled';
 ae.port         = '9727';
 ae.bodytype     = 'json'; // select 'json' or 'xml' or 'cbor'
 ae.tasport      = '3105';
 
 // build cnt
+// var count = 0;
+// cnt_arr[count] = {};
+// cnt_arr[count].parent = '/' + cse.name + '/' + ae.name;
+// cnt_arr[count++].name = 'cnt-co2';
+// cnt_arr[count] = {};
+// cnt_arr[count].parent = '/' + cse.name + '/' + ae.name;
+// cnt_arr[count++].name = 'cnt-led';
+
+
+/*
+  euijoon's comment
+  1 ae, 2 cnt (1cnt : cnt for req, 2cnt : cnt for res ) euijoon
+  At one ae, there's two cnt, first cnt is made by itselft. first cnt takes request from outside.
+  second cnt takes response from itselft, other ae (such as android) can add sub to second cnt.
+
+*/
 var count = 0;
 cnt_arr[count] = {};
 cnt_arr[count].parent = '/' + cse.name + '/' + ae.name;
-cnt_arr[count++].name = 'cnt-co2';
+cnt_arr[count++].name = 'cnt-led_req';
 cnt_arr[count] = {};
 cnt_arr[count].parent = '/' + cse.name + '/' + ae.name;
-cnt_arr[count++].name = 'cnt-led';
+cnt_arr[count++].name = 'cnt-led_res';
+
+
 //cnt_arr[count] = {};
 //cnt_arr[count].parent = '/' + cse.name + '/' + ae.name;
 //cnt_arr[count++].name = 'cnt-timer';
@@ -67,11 +88,12 @@ count = 0;
 //sub_arr[count++].nu = 'mqtt://' + cse.host + '/' + ae.id;
 
 sub_arr[count] = {};
-sub_arr[count].parent = '/' + cse.name + '/' + ae.name + '/' + cnt_arr[1].name;
+// sub_arr[count].parent = '/' + cse.name + '/' + ae.name + '/' + cnt_arr[1].name;
+sub_arr[count].parent = '/' + cse.name + '/' + ae.name + '/' + cnt_arr[0].name;
 sub_arr[count].name = 'sub-ctrl2';
 
 //var ip = require("ip");
-//sub_arr[count++].nu = conf.useprotocol + '://' + ip.address() + ':' + ae.port + '/noti';
+//sub_arr[count++].nu = conf.useprotocol + '://' + ip.address() + ':' + ae.port + '/noti';w
 
 //sub_arr[count++].nu = 'mqtt://' + cse.host + '/' + ae.id + '?rcn=9';
 sub_arr[count++].nu = 'mqtt://' + cse.host + '/' + ae.id + '?ct=' + ae.bodytype;
